@@ -1,0 +1,24 @@
+{
+  "name": "track-packaging",
+  "version": "1.0.0",
+  "description": "Infrastructure and Scripts to download and render, and package track tiles",
+  "main": "track2list.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bikelomatic-complexity/track-packaging.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bikelomatic-complexity/track-packaging/issues"
+  },
+  "homepage": "https://github.com/bikelomatic-complexity/track-packaging#readme",
+  "dependencies": {
+    "bresenham": "0.0.4",
+    "mathjs": "^2.6.0",
+    "underscore": "^1.8.3"
+  }
+}
