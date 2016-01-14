@@ -2,7 +2,7 @@
   "name": "track-packaging",
   "version": "1.0.0",
   "description": "Infrastructure and Scripts to download and render, and package track tiles",
-  "main": "track2list.js",
+  "main": "gpx-tiles.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
