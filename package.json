@@ -21,6 +21,7 @@
     "bresenham": "0.0.4",
     "idris-gpx": "^0.1.1",
     "mathjs": "^2.6.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "xml2js": "^0.4.16"
   }
 }
