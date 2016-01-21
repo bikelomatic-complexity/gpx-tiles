@@ -1,5 +1,7 @@
 var fs = require('fs');
 var gpx = require('idris-gpx');
+var parseString = require('xml2js').parseString;
+
 var _ = require('underscore');
 var ArgumentParser = require('argparse').ArgumentParser;
 
@@ -56,55 +58,64 @@ var args = parser.parseArgs();
 // var pt0 = {lat: 43.9554, lon: -86.4524};
 // var pt1 = {lat: 42.7194, lon: -82.4922};
 //
-var tile = function(pt, zoom) {
+function tile(pt, zoom) {
   return {
     x: names.long2tile(pt.lon, zoom),
     y: names.lat2tile(pt.lat, zoom)
   };
-};
-//
-// var emit = function(pt) {
-//   console.log(this.zoom + ', ' + pt.x + ', ' + pt.y);
-// };
-//
-// for(var i = 1; i <= zoom; i++) {
-//   var tile0 = tile(pt0, i);
-//   var tile1 = tile(pt1, i);
-//
-//   thick(tile0.x, tile0.y, tile1.x, tile1.y, thickness, i, emit);
-// }
+}
 
-var stream = fs.createWriteStream(args.outfile);
-stream.once('open', function(fd) {
-  var emit = function(pt) {
-    stream.write(this.zoom + ', ' + pt.x + ', ' + pt.y + '\n');
-  };
-
-  gpx.points(args.infile, function(collection) {
-    var coordinates = collection.features.map(function(point) {
-      return point.geometry.coordinates;
-    });
-
-    var last = coordinates.pop();
-    var coord0 = {
-      lat: last[1],
-      lon: last[0]
+function writeTileList(json) {
+  var stream = fs.createWriteStream(args.outfile);
+  stream.once('open', function(fd) {
+    var emit = function(pt) {
+      stream.write(this.zoom + ', ' + pt.x + ', ' + pt.y + '\n');
     };
-    coordinates.forEach(function(coordinate) {
-      var coord1 = {
-        lat: coordinate[1],
-        lon: coordinate[0]
-      };
-      for(zoom = args.zoom[0]; zoom <= args.zoom[1]; zoom++) {
-        var tile0 = tile(coord0, zoom);
-        var tile1 = tile(coord1, zoom);
-        debugger;
 
-        thick(tile0.x, tile0.y, tile1.x, tile1.y, args.thickness, zoom, emit);
-      }
-      coord0 = coord1;
+    json.gpx.trk[0].trkseg.forEach(trkseg => {
+      var coordinates = trkseg.trkpt.map(trkpt => {
+        return [
+          trkpt['$'].lat,
+          trkpt['$'].lon
+        ];
+      });
+      // var coordinates = collection.features.map(function(point) {
+      //   return point.geometry.coordinates;
+      // });
+
+      var last = coordinates.pop();
+      var coord0 = {
+        lat: last[0],
+        lon: last[1]
+      };
+      coordinates.forEach(function(coordinate) {
+        var coord1 = {
+          lat: coordinate[0],
+          lon: coordinate[1]
+        };
+        for(zoom = args.zoom[0]; zoom <= args.zoom[1]; zoom++) {
+          var tile0 = tile(coord0, zoom);
+          var tile1 = tile(coord1, zoom);
+          debugger;
+
+          thick(tile0.x, tile0.y, tile1.x, tile1.y, args.thickness, zoom, emit);
+        }
+        coord0 = coord1;
+      });
     });
 
     stream.end();
+  });
+}
+
+fs.readFile(args.infile, 'utf8', (err, data) => {
+  if(err) {
+    return console.error(err);
+  }
+  parseString(data, (err, result) => {
+    if(err) {
+      return console.error(err);
+    }
+    writeTileList(result);
   });
 });
