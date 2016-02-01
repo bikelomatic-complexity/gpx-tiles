@@ -75,8 +75,8 @@ function writeTileList(json) {
     json.gpx.trk[0].trkseg.forEach(trkseg => {
       var coordinates = trkseg.trkpt.map(trkpt => {
         return [
-          trkpt['$'].lat,
-          trkpt['$'].lon
+          parseFloat(trkpt['$'].lat),
+          parseFloat(trkpt['$'].lon)
         ];
       });
       // var coordinates = collection.features.map(function(point) {
@@ -88,16 +88,19 @@ function writeTileList(json) {
         lat: last[0],
         lon: last[1]
       };
-      coordinates.forEach(function(coordinate) {
+      coordinates.reverse().forEach(function(coordinate) {
         var coord1 = {
           lat: coordinate[0],
           lon: coordinate[1]
         };
         for(zoom = args.zoom[0]; zoom <= args.zoom[1]; zoom++) {
+          //console.log('coord0 lat: ' + coord0.lat + ', coord1 lat: ' + coord1.lat);
+
           var tile0 = tile(coord0, zoom);
           var tile1 = tile(coord1, zoom);
-          debugger;
 
+					//console.log('Start x: ' + tile0.x + ', y: ' + tile0.y);
+					//console.log('End   x: ' + tile1.x + ', y: ' + tile1.y);
           thick(tile0.x, tile0.y, tile1.x, tile1.y, args.thickness, zoom, emit);
         }
         coord0 = coord1;
