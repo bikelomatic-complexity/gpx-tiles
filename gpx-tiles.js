@@ -53,11 +53,6 @@ parser.addArgument(
 );
 var args = parser.parseArgs();
 
-// var zoom = 12;
-//
-// var pt0 = {lat: 43.9554, lon: -86.4524};
-// var pt1 = {lat: 42.7194, lon: -82.4922};
-//
 function tile(pt, zoom) {
   return {
     x: names.long2tile(pt.lon, zoom),
@@ -72,16 +67,13 @@ function writeTileList(json) {
       stream.write(this.zoom + ', ' + pt.x + ', ' + pt.y + '\n');
     };
 
-    json.gpx.trk[0].trkseg.forEach(trkseg => {
-      var coordinates = trkseg.trkpt.map(trkpt => {
+    json.gpx.trk[0].trkseg.forEach(function(trkseg) {
+      var coordinates = trkseg.trkpt.map(function(trkpt) {
         return [
           parseFloat(trkpt['$'].lat),
           parseFloat(trkpt['$'].lon)
         ];
       });
-      // var coordinates = collection.features.map(function(point) {
-      //   return point.geometry.coordinates;
-      // });
 
       var last = coordinates.pop();
       var coord0 = {
@@ -94,13 +86,9 @@ function writeTileList(json) {
           lon: coordinate[1]
         };
         for(zoom = args.zoom[0]; zoom <= args.zoom[1]; zoom++) {
-          //console.log('coord0 lat: ' + coord0.lat + ', coord1 lat: ' + coord1.lat);
-
           var tile0 = tile(coord0, zoom);
           var tile1 = tile(coord1, zoom);
 
-					//console.log('Start x: ' + tile0.x + ', y: ' + tile0.y);
-					//console.log('End   x: ' + tile1.x + ', y: ' + tile1.y);
           thick(tile0.x, tile0.y, tile1.x, tile1.y, args.thickness, zoom, emit);
         }
         coord0 = coord1;
@@ -111,11 +99,11 @@ function writeTileList(json) {
   });
 }
 
-fs.readFile(args.infile, 'utf8', (err, data) => {
+fs.readFile(args.infile, 'utf8', function(err, data) {
   if(err) {
     return console.error(err);
   }
-  parseString(data, (err, result) => {
+  parseString(data, function(err, result) {
     if(err) {
       return console.error(err);
     }
