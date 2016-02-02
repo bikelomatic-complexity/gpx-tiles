@@ -1,5 +1,4 @@
 var fs = require('fs');
-var gpx = require('idris-gpx');
 var parseString = require('xml2js').parseString;
 var Set = require('set');
 var docuri = require('docuri');
