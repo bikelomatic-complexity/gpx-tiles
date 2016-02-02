@@ -36,7 +36,7 @@ parser.addArgument(
 parser.addArgument(
   ['-t', '--thickness'],
   {
-    required: false,
+    required: true, // This is an example improvement to the code
     type: 'int',
     defaultValue: 6,
     help: 'The desired thickness of the track in tiles',
